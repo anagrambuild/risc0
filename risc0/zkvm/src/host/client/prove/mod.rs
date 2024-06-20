@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[cfg(feature = "bonsai")]
 pub(crate) mod bonsai;
 pub(crate) mod external;
 #[cfg(feature = "prove")]
@@ -26,7 +27,10 @@ use risc0_circuit_recursion::control_id::ALLOWED_CONTROL_IDS;
 use risc0_circuit_rv32im::control_id::SHA256_CONTROL_IDS;
 use risc0_zkp::core::digest::Digest;
 
-use self::{bonsai::BonsaiProver, external::ExternalProver};
+#[cfg(feature = "bonsai")]
+use self::bonsai::BonsaiProver;
+
+use self::external::ExternalProver;
 use crate::{
     host::prove_info::ProveInfo, is_dev_mode, ExecutorEnv, Receipt, SessionInfo, VerifierContext,
 };
@@ -306,6 +310,7 @@ pub fn default_prover() -> Rc<dyn Prover> {
     let explicit = std::env::var("RISC0_PROVER").unwrap_or_default();
     if !explicit.is_empty() {
         return match explicit.to_lowercase().as_str() {
+            #[cfg(feature = "bonsai")]
             "bonsai" => Rc::new(BonsaiProver::new("bonsai")),
             "ipc" => Rc::new(ExternalProver::new("ipc", get_r0vm_path())),
             #[cfg(feature = "prove")]
@@ -314,7 +319,7 @@ pub fn default_prover() -> Rc<dyn Prover> {
         };
     }
 
-    if !is_dev_mode()
+    if !is_dev_mode() && cfg!(feature = "bonsai")
         && std::env::var("BONSAI_API_URL").is_ok()
         && std::env::var("BONSAI_API_KEY").is_ok()
     {
