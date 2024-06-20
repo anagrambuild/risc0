@@ -323,6 +323,7 @@ pub fn default_prover() -> Rc<dyn Prover> {
         && std::env::var("BONSAI_API_URL").is_ok()
         && std::env::var("BONSAI_API_KEY").is_ok()
     {
+        #[cfg(feature = "bonsai")]
         return Rc::new(BonsaiProver::new("bonsai"));
     }
 
