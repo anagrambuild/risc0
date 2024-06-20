@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+#[cfg(feature = "bonsai")]
 pub(crate) mod bonsai;
 pub(crate) mod external;
 #[cfg(feature = "prove")]
