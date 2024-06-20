@@ -122,13 +122,16 @@ pub use {
         client::{
             env::{ExecutorEnv, ExecutorEnvBuilder},
             prove::{
-                bonsai::BonsaiProver, default_executor, default_prover, external::ExternalProver,
+                default_executor, default_prover, external::ExternalProver,
                 Executor, Prover, ProverOpts, ReceiptKind,
             },
         },
     },
     risc0_circuit_rv32im::trace::{TraceCallback, TraceEvent},
 };
+#[cfg(all(not(target_os = "zkvm"), feature = "bonsai"))]
+pub use bonsai::BonsaiProver;
+
 #[cfg(not(target_os = "zkvm"))]
 pub use {
     self::host::{
